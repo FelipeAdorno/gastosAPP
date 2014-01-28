@@ -1,0 +1,30 @@
+@CHARSET "UTF-8";
+.nao-visivel {
+	display: none;
+}
+
+.form-control { 
+	margin-bottom: 10px; 
+}
+
+.profile-img {
+	height: 40px !important;
+	width: 40px !important;
+}
+
+.icon-dropdown {
+position: relative;
+display: inline-block;
+border: 5px solid transparent;
+border-top-color: #999;
+top: 3px;
+cursor: pointer;
+}
+
+.icon-dropup {
+border-top-color: transparent;
+display: inline-block;
+border: 5px solid transparent;
+border-bottom-color: #999;
+top: -3px;
+}
