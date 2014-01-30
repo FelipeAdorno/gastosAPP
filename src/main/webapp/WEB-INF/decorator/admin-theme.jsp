@@ -40,7 +40,9 @@
       <span class="icon-bar"></span>
       <span class="icon-bar"></span>
     </button>
-    <a class="navbar-brand" href="#">${usuarioSessaoVO.nome}</a>
+    <a class="navbar-brand" href="#" style="padding: 5px 15px !important;">
+    	<img src="<c:url value='/resources/images/logo.png' />" width="100" height="39" />
+    </a>
   </div>
 
   <!-- Collect the nav links, forms, and other content for toggling -->
