@@ -1,5 +1,7 @@
 package br.com.squamata.gastos.service.provider;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import br.com.squamata.gastos.domain.Role;
 import br.com.squamata.gastos.domain.Usuario;
 import br.com.squamata.gastos.enumeration.TipoUsuarioEnum;
+import br.com.squamata.gastos.exception.UsuarioSessaoNullException;
 import br.com.squamata.gastos.repositories.UsuarioRepository;
 import br.com.squamata.gastos.service.UsuarioService;
 import br.com.squamata.gastos.vo.UsuarioListaVO;
@@ -53,12 +56,12 @@ public class UsuarioServiceProvider implements UsuarioService {
 	}
 
 	@Override
-	public void remover(Usuario entrada) {
+	public void remover(String entrada) {
 //		usuarioRepository.delete(Usuario entrada);
 	}
 
 	@Override
-	public Usuario buscar(Usuario entrada) {
+	public Usuario buscar(String entrada, String usuario) {
 //		return usuarioRepository.findOne(id);
 		return null;
 	}
@@ -67,6 +70,12 @@ public class UsuarioServiceProvider implements UsuarioService {
 	public UsuarioListaVO listar(Integer paginaAtual, Integer quantidadeRegistros, String ordenacao) {
 		final PageRequest pageRequest = new PageRequest(paginaAtual, quantidadeRegistros, new Sort(Sort.Direction.ASC, ordenacao));
 		usuarioRepository.findAll(pageRequest);
+		return null;
+	}
+
+	@Override
+	public List<Usuario> listar() throws UsuarioSessaoNullException {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
