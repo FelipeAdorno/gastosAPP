@@ -1,10 +1,11 @@
 @CHARSET "UTF-8";
+
 .nao-visivel {
 	display: none;
 }
 
-.form-control { 
-	margin-bottom: 10px; 
+.form-control {
+	margin-bottom: 10px;
 }
 
 .profile-img {
@@ -13,18 +14,47 @@
 }
 
 .icon-dropdown {
-position: relative;
-display: inline-block;
-border: 5px solid transparent;
-border-top-color: #999;
-top: 3px;
-cursor: pointer;
+	position: relative;
+	display: inline-block;
+	border: 5px solid transparent;
+	border-top-color: #999;
+	top: 3px;
+	cursor: pointer;
 }
 
 .icon-dropup {
-border-top-color: transparent;
-display: inline-block;
-border: 5px solid transparent;
-border-bottom-color: #999;
-top: -3px;
+	border-top-color: transparent;
+	display: inline-block;
+	border: 5px solid transparent;
+	border-bottom-color: #999;
+	top: -3px;
+}
+
+p {
+	display: block;
+	-webkit-margin-before: 1em;
+	-webkit-margin-after: 1em;
+	-webkit-margin-start: 0px;
+	-webkit-margin-end: 0px;
+}
+
+.welcome {
+	margin: 0;
+	font-style: italic;
+	color: #999;
+}
+
+.name {
+	margin: 0;
+	font-family: "Ubuntu", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 20px;
+	font-weight: 300;
+	color: #ccd1d7;
+}
+
+.side-user {
+	display: block;
+	width: 100%;
+	padding: 10px;
+	text-align: center;
 }
