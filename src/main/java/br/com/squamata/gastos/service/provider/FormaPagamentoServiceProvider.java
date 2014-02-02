@@ -1,5 +1,7 @@
 package br.com.squamata.gastos.service.provider;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,23 +51,22 @@ public class FormaPagamentoServiceProvider implements FormaPagamentoService {
 	}
 
 	@Override
-	public void remover(FormaPagamento entrada) throws UsuarioSessaoNullException {
-		logger.info(entrada.getFormaPagamento());
+	public void remover(String entrada) throws UsuarioSessaoNullException {
+		logger.info(entrada);
 		if(usuarioSessaoVO == null) {
 			logger.error("O usuário da sessão não pode ser null");
 			throw new UsuarioSessaoNullException(); 
 		}else{
-			entrada = formaPagamentoRepository.
-					findByUsuarioNomeUsuarioAndFormaPagamento(usuarioSessaoVO.getNomeUsuario(), entrada.getFormaPagamento());
-			logger.info(entrada.getId().getMachine()+"");
-			formaPagamentoRepository.delete(entrada);
+			FormaPagamento formaPagamento = formaPagamentoRepository.
+					findByUsuarioNomeUsuarioAndFormaPagamento(usuarioSessaoVO.getNomeUsuario(), entrada);
+			logger.info(formaPagamento.getId().getMachine()+"");
+			formaPagamentoRepository.delete(formaPagamento);
 		}
 	}
 
 	@Override
-	public FormaPagamento buscar(FormaPagamento entrada) {
-//		return formaPagamentoRepository.findOne(id);
-		return null;
+	public FormaPagamento buscar(String formaPagamento, String nomeUsuario) {
+		return formaPagamentoRepository.findByUsuarioNomeUsuarioAndFormaPagamento(nomeUsuario, formaPagamento);
 	}
 
 	@Override
@@ -77,6 +78,16 @@ public class FormaPagamentoServiceProvider implements FormaPagamentoService {
 			final PageRequest pageRequest = new PageRequest(paginaAtual, quantidadeRegistros, new Sort(Sort.Direction.ASC, ordenacao));
 			Page<FormaPagamento> formasPagamento = formaPagamentoRepository.findByUsuarioNomeUsuario(usuarioSessaoVO.getNomeUsuario(), pageRequest);
 			return new FormaPagamentoListaVO(formasPagamento.getContent(), formasPagamento.getTotalPages(), formasPagamento.getNumber());
+		}
+	}
+
+	@Override
+	public List<FormaPagamento> listar() throws UsuarioSessaoNullException {
+		if(usuarioSessaoVO == null) {
+			logger.error("O usuário da sessão não pode ser null");
+			throw new UsuarioSessaoNullException(); 
+		}else{
+			return formaPagamentoRepository.findByUsuarioNomeUsuario(usuarioSessaoVO.getNomeUsuario());
 		}
 	}
 
