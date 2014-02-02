@@ -11,14 +11,27 @@
 <body>
 <br />
 <div class="row-fluid" ng-controller="CategoriasController" data-ng-init="listar(0);">
-	<ul class="breadcrumb">
-		<li class="active"><span class="glyphicon glyphicon-file">&nbsp;</span><a href="<c:url value='/categorias/'/>">Novo</a></li>
-		<li class="active"><span class="glyphicon glyphicon-list-alt">&nbsp;</span>Listar</li>
-	</ul>
+	
+		
+	<div class="page-header">
+		<h1>Listagem de Categorias</h1>
+	</div>
 	
 	<div class="col-xs-12 col-md-12">
-		<legend>Listagem de Categorias</legend>
+		<ul class="breadcrumb">
+			<li class="active"><span class="glyphicon glyphicon-file">&nbsp;</span><a href="<c:url value='/categorias/'/>">Novo</a></li>
+			<li class="active"><span class="glyphicon glyphicon-list-alt">&nbsp;</span>Listar</li>
+		</ul>
 	</div>
+	
+	<div class="col-xs-10 col-md-10">
+		<div class="row form">
+        	<div class="alert alert-dismissable nao-visivel">
+        		 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        		 <div class = "mensagens"></div>
+        	</div>
+	    </div> 
+	</div> 
 	
 	<div class="col-xs-8 col-md-8">
 		<div class="table-responsive">
