@@ -1,5 +1,7 @@
 package br.com.squamata.gastos.service.provider;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,22 +51,21 @@ public class CategoriaServiceProvider implements CategoriaService {
 	}
 
 	@Override
-	public void remover(Categoria entrada) throws UsuarioSessaoNullException  {
+	public void remover(String entrada) throws UsuarioSessaoNullException  {
 		if(usuarioSessaoVO == null) {
 			logger.error("O usuário da sessão não pode ser null");
 			throw new UsuarioSessaoNullException(); 
 		}else{
-			entrada = categoriaRepository.
-					findByUsuarioNomeUsuarioAndCategoria(usuarioSessaoVO.getNomeUsuario(), entrada.getCategoria());
-			logger.info(entrada.getId().getMachine()+"");
-			categoriaRepository.delete(entrada);
+			Categoria categoria = categoriaRepository.
+					findByUsuarioNomeUsuarioAndCategoria(usuarioSessaoVO.getNomeUsuario(), entrada);
+			logger.info(categoria.getId().getMachine()+"");
+			categoriaRepository.delete(categoria);
 		}
 	}
 
 	@Override
-	public Categoria buscar(Categoria entrada) {
-//		return categoriaRepository.findOne(id);
-		return null;
+	public Categoria buscar(String categoria, String nomeUsuario) {
+		return categoriaRepository.findByUsuarioNomeUsuarioAndCategoria(nomeUsuario, categoria);
 	}
 
 	@Override
@@ -76,6 +77,16 @@ public class CategoriaServiceProvider implements CategoriaService {
 			final PageRequest pageRequest = new PageRequest(paginaAtual, quantidadeRegistros, new Sort(Sort.Direction.ASC, ordenacao));
 			Page<Categoria> categorias = categoriaRepository.findByUsuarioNomeUsuario(usuarioSessaoVO.getNomeUsuario(), pageRequest);
 			return new CategoriaListaVO(categorias.getContent(), categorias.getTotalPages(), categorias.getNumber());
+		}
+	}
+
+	@Override
+	public List<Categoria> listar() throws UsuarioSessaoNullException {
+		if(usuarioSessaoVO == null) {
+			logger.error("O usuário da sessão não pode ser null");
+			throw new UsuarioSessaoNullException(); 
+		}else{
+			return categoriaRepository.findByUsuarioNomeUsuario(usuarioSessaoVO.getNomeUsuario());
 		}
 	}
 
