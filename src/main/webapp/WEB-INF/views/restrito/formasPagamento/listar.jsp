@@ -11,10 +11,18 @@
 <body>
 <br />
 <div class="row-fluid" ng-controller="FormasPagamentoController" data-ng-init="listar(0);">
-	<ul class="breadcrumb">
-		<li class="active"><span class="glyphicon glyphicon-file">&nbsp;</span><a href="<c:url value='/formasPagamento/'/>">Novo</a></li>
-		<li class="active"><span class="glyphicon glyphicon-list-alt">&nbsp;</span>Listar</li>
-	</ul>
+
+	<div class="page-header">
+		<h1>Listagem de Formas Pagamento</h1>
+	</div>
+	
+	<div class="col-xs-12 col-md-12">
+		<ul class="breadcrumb">
+			<li class="active"><span class="glyphicon glyphicon-file">&nbsp;</span><a href="<c:url value='/formasPagamento/'/>">Novo</a></li>
+			<li class="active"><span class="glyphicon glyphicon-list-alt">&nbsp;</span>Listar</li>
+		</ul>
+	</div>
+	
 	<div class="col-xs-10 col-md-10">
 		<div class="row form">
         	<div class="alert alert-dismissable nao-visivel">
@@ -23,10 +31,6 @@
         	</div>
 	    </div> 
 	</div> 
-	
-	<div class="col-xs-12 col-md-12">
-		<legend>Listagem de Formas Pagamento</legend>
-	</div>
 	
 	<div class="col-xs-8 col-md-8">
 		<div class="table-responsive">
