@@ -12,7 +12,23 @@ var Main = {
 		init : function() {
 			$('.tel').mask('(99)9999-9999');
 			$('.cnpj').mask('99.999.999/9999-99');
-			$('#date').datepicker(new Date());
+			$('.monetario').maskMoney();
+			$(".monetario").on('blur', function(ev){
+				var valor = parseFloat($(".monetario").val().replace(".","").replace(",",".")).toFixed(2);
+				angular.element($(this)).controller("ngModel").$setViewValue(valor);
+			});
+			$('#date').datepicker().on('changeDate', function(ev){
+				if (window.angular && angular.element){
+		            // Update the angular model
+		            angular.element($(this).children()[0]).controller("ngModel").$setViewValue(ev.date);
+				}
+		    });
+			$(".spinner").spinner('changing', function(e, newVal, oldVal){
+				if (window.angular && angular.element){
+		            // Update the angular model
+		            angular.element($(this)).controller("ngModel").$setViewValue(newVal);
+				}
+			});
 		},
 		ativarMenu : function(menu) {
 			Main.limparMenusAtivo();
