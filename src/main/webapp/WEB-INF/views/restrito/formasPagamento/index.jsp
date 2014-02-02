@@ -11,13 +11,15 @@
 <body>
 <br />
 <div class="row-fluid" ng-controller="FormasPagamentoController">
-	<ul class="breadcrumb">
-		<li class="active"><span class="glyphicon glyphicon-file">&nbsp;</span>Novo</li>
-		<li><span class="glyphicon glyphicon-list-alt">&nbsp;</span><a href="<c:url value='/formasPagamento/listar'/>">Listar</a></li>
-	</ul>
+	<div class="page-header">
+		<h1>Cadastrar Formas Pagamento</h1>
+	</div>
 	
 	<div class="col-xs-12 col-md-12">
-		<legend>Cadastrar Formas Pagamento</legend>
+		<ul class="breadcrumb">
+			<li class="active"><span class="glyphicon glyphicon-file">&nbsp;</span>Novo</li>
+			<li><span class="glyphicon glyphicon-list-alt">&nbsp;</span><a href="<c:url value='/formasPagamento/listar'/>">Listar</a></li>
+		</ul>
 	</div>
 	
 	<div class="col-xs-10 col-md-10">
