@@ -12,25 +12,33 @@
 	
 	<!-- Application Loggers -->
 	<logger name="br.com.squamata">
-		<level value="info" />
+		<level value="info, error, warn" />
 	</logger>
 	
 	<!-- 3rdparty Loggers -->
 	<logger name="org.springframework.core">
-		<level value="info" />
+		<level value="info, error, warn" />
 	</logger>
 	
 	<logger name="org.springframework.beans">
-		<level value="info" />
+		<level value="info, error, warn" />
 	</logger>
 	
 	<logger name="org.springframework.context">
-		<level value="info" />
+		<level value="info, error, warn" />
 	</logger>
 
 	<logger name="org.springframework.web">
-		<level value="info" />
+		<level value="info, error, warn" />
 	</logger>
+	
+	<!--<logger name="org.springframework.data">
+		<level value="ALL" />
+	</logger>
+	
+	<logger name="org.springframework.data.mongodb">
+		<level value="ALL" />
+	</logger> -->
 
 	<!-- Root Logger -->
 	<root>
