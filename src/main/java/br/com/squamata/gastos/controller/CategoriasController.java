@@ -66,6 +66,19 @@ public class CategoriasController extends AbstractController {
 		return new ModelAndView("/restrito/categorias/listar");
 	}
 	
+	@RequestMapping(value = "/listarTudo", method = RequestMethod.GET)
+	public ResponseEntity<CategoriaListaVO> listarTudo(Locale locale, Model model) {
+		CategoriaListaVO categoria = null;
+		try {
+			categoria = new CategoriaListaVO( categoriaService.listar(), null, null);
+			return new ResponseEntity<CategoriaListaVO>(categoria, HttpStatus.OK);
+		} catch (UsuarioSessaoNullException e) {
+			logger.error(e.getMessage());
+			return new ResponseEntity<CategoriaListaVO>(categoria, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+	}
+	
 	@RequestMapping(value = "/listar/{paginaAtual}", method = RequestMethod.GET)
 	public ResponseEntity<CategoriaListaVO> listar(@PathVariable("paginaAtual") int paginaAtual, Locale locale, Model model) {
 		CategoriaListaVO categoria = null;
@@ -82,10 +95,8 @@ public class CategoriasController extends AbstractController {
 	@RequestMapping(value = "/excluir/{categoria}", method = RequestMethod.GET)
 	public ResponseEntity<MensagemRetornoVO> excluir(@PathVariable("categoria") String descricao, Locale locale) {
 		final MensagemRetornoVO retorno = new MensagemRetornoVO();
-		Categoria categoria = new Categoria();
-		categoria.setCategoria(descricao);
 		try {
-			categoriaService.remover(categoria);
+			categoriaService.remover(descricao);
 			retorno.setTipoMensagemEnum(TipoMensagemEnum.SUCCESS);
 			retorno.addMensagem("Remoção realizada com sucesso!");
 			return new ResponseEntity<MensagemRetornoVO>(retorno, HttpStatus.OK);
