@@ -1,5 +1,7 @@
 package br.com.squamata.gastos.service;
 
+import java.util.List;
+
 import br.com.squamata.gastos.exception.UsuarioSessaoNullException;
 
 
@@ -9,10 +11,12 @@ public interface AbstractService<Domain, Lista> {
 	
 	void atualizar(Domain entrada);
 	
-	void remover(Domain entrada) throws UsuarioSessaoNullException;
+	void remover(String entrada) throws UsuarioSessaoNullException;
 	
-	Domain buscar(Domain entrada);
+	Domain buscar(String descricao, String usuario);
 	
 	Lista listar(Integer paginaAtual, Integer quantidadeRegistros, String ordenacao) throws UsuarioSessaoNullException;
+	
+	List<Domain> listar() throws UsuarioSessaoNullException;
 	
 }
