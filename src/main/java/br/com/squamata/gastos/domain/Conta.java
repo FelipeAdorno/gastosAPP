@@ -1,5 +1,8 @@
 package br.com.squamata.gastos.domain;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -18,17 +21,15 @@ public class Conta {
 	
 	private String descricao;
 	
-	private Integer diaVencimento;
-	
-	private Integer mesVencimento;
-	
-	private Integer anoVencimento;
+	private Date vencimento;
 	
 	private Boolean paga;
 	
-	private Boolean numeroParcela;
+	private Integer numeroParcela;
 	
-	private Boolean totalParcelas;
+	private Integer totalParcelas;
+	
+	private BigDecimal valor;
 
 	public ObjectId getId() {
 		return id;
@@ -70,28 +71,12 @@ public class Conta {
 		this.descricao = descricao;
 	}
 
-	public Integer getDiaVencimento() {
-		return diaVencimento;
+	public Date getVencimento() {
+		return vencimento;
 	}
 
-	public void setDiaVencimento(Integer diaVencimento) {
-		this.diaVencimento = diaVencimento;
-	}
-
-	public Integer getMesVencimento() {
-		return mesVencimento;
-	}
-
-	public void setMesVencimento(Integer mesVencimento) {
-		this.mesVencimento = mesVencimento;
-	}
-
-	public Integer getAnoVencimento() {
-		return anoVencimento;
-	}
-
-	public void setAnoVencimento(Integer anoVencimento) {
-		this.anoVencimento = anoVencimento;
+	public void setVencimento(Date vencimento) {
+		this.vencimento = vencimento;
 	}
 
 	public Boolean getPaga() {
@@ -102,21 +87,27 @@ public class Conta {
 		this.paga = paga;
 	}
 
-	public Boolean getNumeroParcela() {
+	public Integer getNumeroParcela() {
 		return numeroParcela;
 	}
 
-	public void setNumeroParcela(Boolean numeroParcela) {
+	public void setNumeroParcela(Integer numeroParcela) {
 		this.numeroParcela = numeroParcela;
 	}
 
-	public Boolean getTotalParcelas() {
+	public Integer getTotalParcelas() {
 		return totalParcelas;
 	}
 
-	public void setTotalParcelas(Boolean totalParcelas) {
+	public void setTotalParcelas(Integer totalParcelas) {
 		this.totalParcelas = totalParcelas;
 	}
 
+	public BigDecimal getValor() {
+		return valor;
+	}
 
+	public void setValor(BigDecimal valor) {
+		this.valor = valor;
+	}
 }
