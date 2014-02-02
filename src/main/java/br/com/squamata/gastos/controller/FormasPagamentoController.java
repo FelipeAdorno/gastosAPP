@@ -66,6 +66,19 @@ public class FormasPagamentoController extends AbstractController {
 		return new ModelAndView("/restrito/formasPagamento/listar");
 	}
 	
+	@RequestMapping(value = "/listarTudo", method = RequestMethod.GET)
+	public ResponseEntity<FormaPagamentoListaVO> listarTudo(Locale locale, Model model) {
+		FormaPagamentoListaVO formasPagamento = null;
+		try {
+			formasPagamento = new FormaPagamentoListaVO(formaPagamentoService.listar(), null, null);
+			return new ResponseEntity<FormaPagamentoListaVO>(formasPagamento, HttpStatus.OK);
+		} catch (UsuarioSessaoNullException e) {
+			logger.error(e.getMessage());
+			return new ResponseEntity<FormaPagamentoListaVO>(formasPagamento, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+	}
+	
 	@RequestMapping(value = "/listar/{paginaAtual}", method = RequestMethod.GET)
 	public ResponseEntity<FormaPagamentoListaVO> listar(@PathVariable("paginaAtual") Integer paginaAtual, Locale locale, Model model) {
 		FormaPagamentoListaVO formasPagamento = null;
@@ -82,10 +95,8 @@ public class FormasPagamentoController extends AbstractController {
 	@RequestMapping(value = "/excluir/{formaPagamento}", method = RequestMethod.GET)
 	public ResponseEntity<MensagemRetornoVO> excluir(@PathVariable("formaPagamento") String formaPagamento, Locale locale) {
 		final MensagemRetornoVO retorno = new MensagemRetornoVO();
-		FormaPagamento forma = new FormaPagamento();
-		forma.setFormaPagamento(formaPagamento);
 		try {
-			formaPagamentoService.remover(forma);
+			formaPagamentoService.remover(formaPagamento);
 			retorno.setTipoMensagemEnum(TipoMensagemEnum.SUCCESS);
 			retorno.addMensagem("Remoção realizada com sucesso!");
 			return new ResponseEntity<MensagemRetornoVO>(retorno, HttpStatus.OK);
