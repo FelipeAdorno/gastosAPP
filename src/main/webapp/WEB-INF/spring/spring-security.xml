@@ -15,11 +15,11 @@
  
         <security:logout invalidate-session="true" logout-success-url="/" logout-url="/logout"  />
         
-        <security:intercept-url pattern="/restrito/**" access="hasRole('ROLE_USUARIO')" />
+       <!--<security:intercept-url pattern="/restrito/**" access="hasRole('ROLE_USUARIO')" />
         <security:intercept-url pattern="/gastos/**" access="hasRole('ROLE_USUARIO')" />
         <security:intercept-url pattern="/categorias/**" access="hasRole('ROLE_USUARIO')" />
         <security:intercept-url pattern="/contas/**" access="hasRole('ROLE_USUARIO')" />
-        <security:intercept-url pattern="/formasPagamento/**" access="hasRole('ROLE_USUARIO')" />
+        <security:intercept-url pattern="/formasPagamento/**" access="hasRole('ROLE_USUARIO')" /> -->
     </security:http>
 
     
