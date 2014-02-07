@@ -3,6 +3,7 @@ package br.com.squamata.gastos.service.provider;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -21,11 +22,13 @@ import br.com.squamata.gastos.domain.Usuario;
 import br.com.squamata.gastos.exception.UsuarioSessaoNullException;
 import br.com.squamata.gastos.mapper.ContaMapper;
 import br.com.squamata.gastos.repositories.ContaRepository;
+import br.com.squamata.gastos.repositories.TotalGastosRepository;
 import br.com.squamata.gastos.service.ContaService;
 import br.com.squamata.gastos.service.FormaPagamentoService;
 import br.com.squamata.gastos.service.UsuarioService;
 import br.com.squamata.gastos.vo.ContaListaVO;
 import br.com.squamata.gastos.vo.ContaVO;
+import br.com.squamata.gastos.vo.TotalContaVO;
 import br.com.squamata.gastos.vo.UsuarioSessaoVO;
 
 @Service(value="contaService")
@@ -50,6 +53,9 @@ public class ContaServiceProvider implements ContaService {
 	
 	@Autowired
 	private CategoriaServiceProvider categoriaServiceProvider;
+	
+	@Autowired
+	private TotalGastosRepository totalGastosRepository;
 
 	@Override
 	public void salvar(ContaVO entrada) throws UsuarioSessaoNullException {
@@ -90,6 +96,7 @@ public class ContaServiceProvider implements ContaService {
 			novaConta.setTotalParcelas(conta.getTotalParcelas());
 			novaConta.setNumeroParcela(i);
 			novaConta.setUsuario(conta.getUsuario());
+			novaConta.setValor(conta.getValor());
 			
 			calendario.add(Calendar.MONTH, 1);  
 			novaConta.setVencimento(calendario.getTime());
@@ -127,7 +134,6 @@ public class ContaServiceProvider implements ContaService {
 
 	@Override
 	public ContaVO buscar(String entrada, String usuario) {
-//		return categoriaRepository.findOne(id);
 		return null;
 	}
 	
@@ -141,31 +147,40 @@ public class ContaServiceProvider implements ContaService {
 			 * Tenho que buscar o ultimo dia do mês anterior e o primeiro dia 
 			 * do próximos mês, pq a busca é feito com menor que e maior que
 			 */
+			Date dataInicial = this.popularDataInicial(mes, ano);
 			
-			Integer mesAnterior = mes - 1;
-			Integer proximoMes = mes + 1;
-			
-			//Inicio o calendario com o ano atual
-			Calendar calendar = Calendar.getInstance();
-			calendar.set(Calendar.YEAR, ano);
-			
-			//seto o mes anterior e faço a busca do ultimo dia
-			calendar.set(Calendar.MONTH, mesAnterior);
-			Integer ultimoDiaMesAnterior = calendar.getActualMaximum(Calendar.DAY_OF_MONTH); //ULTIMO DIA DO MES ANTERIORO
-			calendar.set(Calendar.DAY_OF_MONTH, ultimoDiaMesAnterior);
-			Date dataInicial = new Date(calendar.getTimeInMillis());
-			
-			//seto o proximo mes e faço a busca do ultimo dia
-			calendar.set(Calendar.MONTH, proximoMes);
-			Integer primeiroDiaProximoMes = calendar.getActualMaximum(Calendar.DAY_OF_MONTH); //PRIMEIRO DIA DO PRÓXIMO MES
-			calendar.set(Calendar.DAY_OF_MONTH, primeiroDiaProximoMes);
-			Date dataFinal = new Date(calendar.getTimeInMillis());
+			Date dataFinal = this.popularDataFinal(mes, ano);
 			
 			final PageRequest pageRequest = new PageRequest(paginaAtual, quantidadeRegistros, new Sort(Sort.Direction.ASC, "vencimento"));
 			
 			Page<Conta> contas = contaRepository.findByUsuarioNomeUsuarioAndVencimentoBetween(usuarioSessaoVO.getNomeUsuario(), dataInicial, dataFinal, pageRequest);
 			
-			return new ContaListaVO(contas.getContent(), contas.getTotalPages(), contas.getNumber());
+			//calcula o total do mês
+			TotalContaVO totalContaVO = totalGastosRepository.buscarTotalMes(dataInicial, dataFinal);
+			
+			return new ContaListaVO(contas.getContent(), contas.getTotalPages(), contas.getNumber(), totalContaVO);
+		}
+	}
+	
+	public List<ContaVO> listarContasMes(final Integer mes, final Integer ano) throws UsuarioSessaoNullException {
+		if(usuarioSessaoVO == null) {
+			logger.error("O usuário da sessão não pode ser null");
+			throw new UsuarioSessaoNullException(); 
+		}else{
+			
+			Date dataInicial = this.popularDataInicial(mes, ano);
+			Date dataFinal = this.popularDataFinal(mes, ano);
+			
+			List<ContaVO> contasMapeadas = new ArrayList<ContaVO>();
+			List<Conta> contasNaoMapeadas =  contaRepository.findByUsuarioNomeUsuarioAndVencimentoBetween(
+					usuarioSessaoVO.getNomeUsuario(), dataInicial, dataFinal);
+			
+			if(!CollectionUtils.isEmpty(contasNaoMapeadas)) {
+				for (Conta conta : contasNaoMapeadas) {
+					contasMapeadas.add(contaMapper.mapearContaEmContaVO(conta));
+				}
+			}
+			return contasMapeadas;
 		}
 	}
 
@@ -177,7 +192,7 @@ public class ContaServiceProvider implements ContaService {
 		}else{
 			final PageRequest pageRequest = new PageRequest(paginaAtual, quantidadeRegistros, new Sort(Sort.Direction.ASC, ordenacao));
 			Page<Conta> contas = contaRepository.findByUsuarioNomeUsuario(usuarioSessaoVO.getNomeUsuario(), pageRequest);
-			return new ContaListaVO(contas.getContent(), contas.getTotalPages(), contas.getNumber());
+			return new ContaListaVO(contas.getContent(), contas.getTotalPages(), contas.getNumber(), null);
 		}
 	}
 
@@ -196,6 +211,121 @@ public class ContaServiceProvider implements ContaService {
 			}
 			return contasMapeadas;
 		}
+	}
+
+	@Override
+	public ContaListaVO buscarContasDaSemana(final Integer paginaAtual, final Integer quantidadeRegistros) throws UsuarioSessaoNullException {
+		if(usuarioSessaoVO == null) {
+			logger.error("O usuário da sessão não pode ser null");
+			throw new UsuarioSessaoNullException(); 
+		}else{
+			
+			Date dataInicial = new Date();
+			Date dataFinal = new Date();
+			
+			GregorianCalendar calendar = new GregorianCalendar();
+			calendar.setFirstDayOfWeek(Calendar.MONDAY);
+			calendar.setTime(new Date());
+			
+			calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+			calendar.set(Calendar.AM_PM, Calendar.AM);
+			calendar.set(Calendar.HOUR, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			dataInicial = calendar.getTime();
+			
+			calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+			calendar.set(Calendar.AM_PM, Calendar.PM);
+			calendar.set(Calendar.HOUR, 11);
+			calendar.set(Calendar.MINUTE, 59);
+			calendar.set(Calendar.SECOND, 59);
+			calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY + 6);  
+			dataFinal = calendar.getTime();
+			
+			final PageRequest pageRequest = new PageRequest(paginaAtual, quantidadeRegistros, new Sort(Sort.Direction.ASC, "vencimento"));
+			
+			Page<Conta> contas = contaRepository.findByUsuarioNomeUsuarioAndVencimentoBetween(usuarioSessaoVO.getNomeUsuario(), dataInicial, dataFinal, pageRequest);
+			
+			TotalContaVO totalContaVO = totalGastosRepository.buscarTotalMes(dataInicial, dataFinal);
+		
+			return new ContaListaVO(contas.getContent(), contas.getTotalPages(), contas.getNumber(), totalContaVO);
+		}
+
+	}
+
+	@Override
+	public TotalContaVO buscarTotalMesAtual() throws UsuarioSessaoNullException {
+
+		TotalContaVO totalContaVO = new TotalContaVO();
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		Date dataInicial = this.popularDataInicial(calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR));
+		Date dataFinal = this.popularDataFinal(calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR));
+		
+		totalContaVO = totalGastosRepository.buscarTotalMes(dataInicial, dataFinal);
+		
+		return totalContaVO;
+	}
+
+	@Override
+	public TotalContaVO buscarTotalMes(Integer mes, Integer ano) throws UsuarioSessaoNullException {
+
+		TotalContaVO totalContaVO = new TotalContaVO();
+		
+		Date dataInicial = this.popularDataInicial(mes, ano);
+		Date dataFinal = this.popularDataFinal(mes, ano);
+		
+		totalContaVO = totalGastosRepository.buscarTotalMes(dataInicial, dataFinal);
+		
+		return totalContaVO;
+	}
+	
+	@Override
+	public TotalContaVO buscarTotalDividas() throws UsuarioSessaoNullException {
+		
+		TotalContaVO totalContaVO = new TotalContaVO();
+		
+		totalContaVO = totalGastosRepository.buscarTotal();
+		
+		return totalContaVO;
+	}
+	
+	
+	private Date popularDataInicial(final Integer mes, final Integer ano) {
+		
+		Integer mesAnterior = mes - 1;
+		
+		//Inicio o calendario com o ano atual
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, ano);
+		
+		//seto o mes anterior e faço a busca do ultimo dia
+		calendar.set(Calendar.MONTH, mesAnterior);
+		Integer ultimoDiaMesAnterior = calendar.getActualMaximum(Calendar.DAY_OF_MONTH); //ULTIMO DIA DO MES ANTERIORO
+		calendar.set(Calendar.DAY_OF_MONTH, ultimoDiaMesAnterior);
+		Date dataInicial = new Date(calendar.getTimeInMillis());
+		
+		return dataInicial;
+	}
+	
+	private Date popularDataFinal(final Integer mes, final Integer ano) {
+
+		//Inicio o calendario com o ano atual
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, ano);
+		
+		//seto o proximo mes e faço a busca do ultimo dia
+		calendar.set(Calendar.MONTH, mes);
+		Integer primeiroDiaProximoMes = calendar.getActualMaximum(Calendar.DAY_OF_MONTH); //PRIMEIRO DIA DO PRÓXIMO MES
+		calendar.set(Calendar.DAY_OF_MONTH, primeiroDiaProximoMes);
+		calendar.set(Calendar.AM_PM, Calendar.PM);
+		calendar.set(Calendar.HOUR, 11);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		Date dataFinal = new Date(calendar.getTimeInMillis());
+		
+		return dataFinal;
 	}
 
 	
