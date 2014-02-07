@@ -34,13 +34,6 @@
 	
 	<div class="col-xs-12 col-md-12">
 	
-		<div class="row form">
-        	<div class="alert alert-dismissable nao-visivel">
-        		 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-        		 <div class = "mensagens"></div>
-        	</div>
-	    </div>  
-	
 		<form method="post" class="form-group" ng-submit="cadastrar();">
 		 	<div class="form-group">
 				<div class="row">
