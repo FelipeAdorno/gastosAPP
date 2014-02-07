@@ -58,7 +58,7 @@ $(function() {
                 </button>
                     <a class="navbar-brand" href="#" style="padding: 5px 15px !important;">
     				<img src="<c:url value='/resources/images/logo.png' />" width="100" height="39" /> - 
-    				Squamata Gastos
+    				<span class="welcome"><b>Squamata</b> Gastos </span><span class="welcome">v 1.0 </span><span class="welcome" style="color:#b14436; font-size: 11px;">Beta</span>  
     			</a>
             </div>
             <!-- /.navbar-header -->
@@ -132,14 +132,7 @@ $(function() {
                 <li><a href="<c:url value='/formasPagamento/listar'/>">Listar</a></li>
               </ul>
             </li>
-            <li class="last">
-              <a href="#"><i class="fa fa-caret-square-o-down"></i> Relatorios <b class="caret"></b></a>
-              <ul class="nav nav-second-level collapse">
-                <li><a href="/formasPagamento/">Cadastrar</a></li>
-                <li><a href="/formasPagamento/listar">Listar</a></li>
-              </ul>
-            </li>
-                </ul>
+            </ul>
                 <!-- /#side-menu -->
             </div>
             <!-- /.sidebar-collapse -->
