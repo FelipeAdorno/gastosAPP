@@ -11,11 +11,14 @@ public class ContaListaVO {
 	private Integer quantidadePaginas;
 	
 	private Integer paginaAtual;
+	
+	private TotalContaVO totalContaVO;
 
-	public ContaListaVO(List<Conta> contas, Integer quantidadePaginas, Integer paginaAtual) {
+	public ContaListaVO(List<Conta> contas, Integer quantidadePaginas, Integer paginaAtual, TotalContaVO totalContaVO) {
 		this.setContas(contas);
 		this.setQuantidadePaginas(quantidadePaginas);
 		this.setPaginaAtual(paginaAtual);
+		this.setTotalContaVO(totalContaVO);
 	}
 
 	public List<Conta> getContas() {
@@ -41,5 +44,12 @@ public class ContaListaVO {
 	public void setPaginaAtual(Integer paginaAtual) {
 		this.paginaAtual = paginaAtual;
 	}
-	
+
+	public TotalContaVO getTotalContaVO() {
+		return totalContaVO;
+	}
+
+	public void setTotalContaVO(TotalContaVO totalContaVO) {
+		this.totalContaVO = totalContaVO;
+	}
 }
