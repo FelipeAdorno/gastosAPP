@@ -7,10 +7,6 @@
 	<meta name="decorator" content="admin" /> 
 	<title>Home</title>
 	<script src="<c:url value='/resources/js/Controller/ContasController.js' />"></script>
-	<style>
-		.paga{background-color: #d9ead3}
-		.naoPaga{background-color: #f9f9f9}
-	</style>
 </head>
 <body>
 <br />
