@@ -7,7 +7,7 @@
  	
  	<bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
  
-    <security:global-method-security secured-annotations="enabled" />
+    <security:global-method-security secured-annotations="enabled"  />
  
     <security:http auto-config="true" use-expressions="true" >
  
@@ -15,11 +15,11 @@
  
         <security:logout invalidate-session="true" logout-success-url="/" logout-url="/logout"  />
         
-       <!--<security:intercept-url pattern="/restrito/**" access="hasRole('ROLE_USUARIO')" />
+        <security:intercept-url pattern="/restrito/**" access="hasRole('ROLE_USUARIO')" />
         <security:intercept-url pattern="/gastos/**" access="hasRole('ROLE_USUARIO')" />
         <security:intercept-url pattern="/categorias/**" access="hasRole('ROLE_USUARIO')" />
         <security:intercept-url pattern="/contas/**" access="hasRole('ROLE_USUARIO')" />
-        <security:intercept-url pattern="/formasPagamento/**" access="hasRole('ROLE_USUARIO')" /> -->
+        <security:intercept-url pattern="/formasPagamento/**" access="hasRole('ROLE_USUARIO')" />
     </security:http>
 
     
