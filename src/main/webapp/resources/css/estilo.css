@@ -1,5 +1,8 @@
 @CHARSET "UTF-8";
 
+.paga{background-color: #d9ead3}
+.naoPaga{background-color: #f9f9f9}
+
 .nao-visivel {
 	display: none;
 }
