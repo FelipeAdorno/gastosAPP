@@ -22,4 +22,6 @@ public interface ContaRepository extends PagingAndSortingRepository<Conta,Object
 	
 	Page<Conta> findByUsuarioNomeUsuarioAndVencimentoBetween(String nomeUsuario, Date dataInicial, Date dataFinal, Pageable pageable);
 	
+	List<Conta> findByUsuarioNomeUsuarioAndVencimentoBetween(String nomeUsuario, Date dataInicial, Date dataFinal);
+	
 }
