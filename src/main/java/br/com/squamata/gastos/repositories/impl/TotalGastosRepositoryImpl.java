@@ -58,7 +58,7 @@ public class TotalGastosRepositoryImpl implements TotalGastosRepository {
 	public TotalContaVO buscarTotal() throws UsuarioSessaoNullException {
 
 		if (usuarioSessaoVO == null) {
-			logger.error("O usuário da sessão não pode ser null");
+			logger.error("O usuario da sessao nao pode ser null");
 			throw new UsuarioSessaoNullException();
 		} else {
 
