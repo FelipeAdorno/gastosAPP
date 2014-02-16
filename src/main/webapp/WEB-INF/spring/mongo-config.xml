@@ -11,8 +11,11 @@
           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 	
 	<!-- Mongo config -->
-	<mongo:db-factory id="mongoDbFactory" host="localhost" port="27017" dbname="gastos" />
 	
+	
+	<!--<mongo:db-factory id="mongoDbFactory" uri="mongodb://felipeadsc:felipeADHAHAHA@troup.mongohq.com:10026/gastos" />
+	-->
+	<mongo:db-factory id="mongoDbFactory" host="localhost" port="27017" dbname="gastos" />
 	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
 	 	<constructor-arg ref="mongoDbFactory" />
 	</bean>
