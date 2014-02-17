@@ -8,12 +8,12 @@ import br.com.squamata.gastos.domain.FormaPagamento;
 
 public class FormaPagamentoValidation implements Validator {
 
-	@Override
+	
 	public boolean supports(Class<?> arg0) {
 		return FormaPagamento.class.equals(arg0);
 	}
 
-	@Override
+	
 	public void validate(Object target, Errors erros) {
 		FormaPagamento formaPagamento = (FormaPagamento) target;
 

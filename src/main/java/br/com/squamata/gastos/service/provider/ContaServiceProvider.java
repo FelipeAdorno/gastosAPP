@@ -1,9 +1,11 @@
 package br.com.squamata.gastos.service.provider;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -57,7 +59,7 @@ public class ContaServiceProvider implements ContaService {
 	@Autowired
 	private TotalGastosRepository totalGastosRepository;
 
-	@Override
+	
 	public void salvar(ContaVO entrada) throws UsuarioSessaoNullException {
 		if(usuarioSessaoVO == null) {
 			logger.error("O usuário da sessão não pode ser null");
@@ -114,12 +116,12 @@ public class ContaServiceProvider implements ContaService {
 		return categoriaServiceProvider.buscar(descricao, usuarioSessaoVO.getNomeUsuario());
 	}
 
-	@Override
+	
 	public void atualizar(ContaVO entrada) {
 		contaRepository.save(contaMapper.mapearContaVOEmConta(entrada));
 	}
 
-	@Override
+	
 	public void remover(String entrada) throws UsuarioSessaoNullException  {
 		if(usuarioSessaoVO == null) {
 			logger.error("O usuário da sessão não pode ser null");
@@ -132,7 +134,7 @@ public class ContaServiceProvider implements ContaService {
 		}
 	}
 
-	@Override
+	
 	public ContaVO buscar(String entrada, String usuario) {
 		return null;
 	}
@@ -155,36 +157,123 @@ public class ContaServiceProvider implements ContaService {
 			
 			Page<Conta> contas = contaRepository.findByUsuarioNomeUsuarioAndVencimentoBetween(usuarioSessaoVO.getNomeUsuario(), dataInicial, dataFinal, pageRequest);
 			
-			//calcula o total do mês
-			TotalContaVO totalContaVO = totalGastosRepository.buscarTotalMes(dataInicial, dataFinal);
+			TotalContaVO totalContaVO = this.calcularValoresContaDoMes(mes, ano);
 			
-			return new ContaListaVO(contas.getContent(), contas.getTotalPages(), contas.getNumber(), totalContaVO);
+			//TODO: REFATORAR ISSO PARA PASSAR O VO
+			return new ContaListaVO(contas.getContent(), 1, 1, totalContaVO);
 		}
 	}
 	
-	public List<ContaVO> listarContasMes(final Integer mes, final Integer ano) throws UsuarioSessaoNullException {
+	/**
+	 * Busca as contas de meses anteriores que ainda não foram pagas
+	 * 
+	 * @return
+	 */
+	public ContaListaVO buscarContasAtrasadas(final Integer paginaAtual, final Integer quantidadeRegistros, final Integer mes, final Integer ano) {
+		
+		Date dataInicial = this.popularDataInicial(mes, ano);
+		
+		final PageRequest pageRequest = new PageRequest(paginaAtual, quantidadeRegistros, new Sort(Sort.Direction.ASC, "vencimento"));
+		
+		Page<Conta> contas = contaRepository.findByUsuarioNomeUsuarioAndVencimentoLessThanAndPaga(usuarioSessaoVO.getNomeUsuario(), dataInicial, Boolean.FALSE, pageRequest);
+		
+		TotalContaVO totalContaVO = this.calcularValoresEmAtraso(mes, ano);
+		
+		//TODO: REFATORAR ISSO PARA PASSAR O VO
+		return new ContaListaVO(contas.getContent(), 1, 1, totalContaVO);
+		
+	}
+	
+	public TotalContaVO calcularValorTotalContasMes(final Integer mes, final Integer ano)  throws UsuarioSessaoNullException {
+		
 		if(usuarioSessaoVO == null) {
 			logger.error("O usuário da sessão não pode ser null");
 			throw new UsuarioSessaoNullException(); 
 		}else{
+		
+			//Apenas o total é preenchido
+			TotalContaVO contasEmAtraso = this.calcularValoresEmAtraso(mes, ano);
+			TotalContaVO contasDoMes = this.calcularValoresContaDoMes(mes, ano);
 			
-			Date dataInicial = this.popularDataInicial(mes, ano);
-			Date dataFinal = this.popularDataFinal(mes, ano);
-			
-			List<ContaVO> contasMapeadas = new ArrayList<ContaVO>();
-			List<Conta> contasNaoMapeadas =  contaRepository.findByUsuarioNomeUsuarioAndVencimentoBetween(
-					usuarioSessaoVO.getNomeUsuario(), dataInicial, dataFinal);
-			
-			if(!CollectionUtils.isEmpty(contasNaoMapeadas)) {
-				for (Conta conta : contasNaoMapeadas) {
-					contasMapeadas.add(contaMapper.mapearContaEmContaVO(conta));
-				}
-			}
-			return contasMapeadas;
+			TotalContaVO totalContaVO = new TotalContaVO();
+			totalContaVO.setTotal(contasEmAtraso.getTotal().add(contasDoMes.getTotal()));
+			totalContaVO.setTotalPagao(contasDoMes.getTotalPagao());
+			totalContaVO.setRestante(contasDoMes.getRestante().add(contasEmAtraso.getTotal()));
+		
+			return totalContaVO;
 		}
+			
+	}
+	
+	/**
+	 * Calcula o valor total das contas em atraso
+	 * 
+	 * @param mes
+	 * @param ano
+	 * @return
+	 */
+	private TotalContaVO calcularValoresEmAtraso(final Integer mes, final Integer ano) {
+		
+		BigDecimal total = BigDecimal.ZERO;
+		BigDecimal valorPago = BigDecimal.ZERO;
+		BigDecimal restante = BigDecimal.ZERO;
+		
+		Date dataInicial = this.popularDataInicial(mes, ano);
+		
+		List<Conta> contasNaoMapeadas =  contaRepository.findByUsuarioNomeUsuarioAndVencimentoLessThanAndPaga(
+				usuarioSessaoVO.getNomeUsuario(), dataInicial, Boolean.FALSE);
+		
+		
+		if(!CollectionUtils.isEmpty(contasNaoMapeadas)) {
+			for (Conta conta : contasNaoMapeadas) {
+				total = total.add(conta.getValor());
+				
+			}
+		}
+		
+		//TODO: REFATORAR ISSO PARA PASSAR O VO
+		return new TotalContaVO(total, valorPago, restante);
+		
+	}
+	
+	/**
+	 * Calcula o valor total das contas do mês
+	 * @param mes
+	 * @param ano
+	 * @return
+	 */
+	private TotalContaVO calcularValoresContaDoMes(final Integer mes, final Integer ano) {
+		
+		BigDecimal total = BigDecimal.ZERO;
+		BigDecimal valorPago = BigDecimal.ZERO;
+		BigDecimal restante = BigDecimal.ZERO;
+		
+		Date dataInicial = this.popularDataInicial(mes, ano);
+		Date dataFinal = this.popularDataFinal(mes, ano);
+		
+		List<Conta> contasNaoMapeadas =  contaRepository.findByUsuarioNomeUsuarioAndVencimentoBetween(
+				usuarioSessaoVO.getNomeUsuario(), dataInicial, dataFinal);
+		
+		
+		if(!CollectionUtils.isEmpty(contasNaoMapeadas)) {
+			for (Conta conta : contasNaoMapeadas) {
+				if(conta.getPaga()){
+					valorPago = valorPago.add(conta.getValor());
+				}else{
+					restante = restante.add(conta.getValor());
+				}
+				
+				total = total.add(conta.getValor());
+				
+			}
+		}
+		
+		//TODO: REFATORAR ISSO PARA PASSAR O VO
+		return new TotalContaVO(total, valorPago, restante);
+		
 	}
 
-	@Override
+	
 	public ContaListaVO listar(Integer paginaAtual, Integer quantidadeRegistros, String ordenacao) throws UsuarioSessaoNullException {
 		if(usuarioSessaoVO == null) {
 			logger.error("O usuário da sessão não pode ser null");
@@ -196,7 +285,7 @@ public class ContaServiceProvider implements ContaService {
 		}
 	}
 
-	@Override
+	
 	public List<ContaVO> listar() throws UsuarioSessaoNullException {
 		if(usuarioSessaoVO == null) {
 			logger.error("O usuário da sessão não pode ser null");
@@ -213,7 +302,7 @@ public class ContaServiceProvider implements ContaService {
 		}
 	}
 
-	@Override
+	
 	public ContaListaVO buscarContasDaSemana(final Integer paginaAtual, final Integer quantidadeRegistros) throws UsuarioSessaoNullException {
 		if(usuarioSessaoVO == null) {
 			logger.error("O usuário da sessão não pode ser null");
@@ -253,42 +342,90 @@ public class ContaServiceProvider implements ContaService {
 
 	}
 
-	@Override
+	
 	public TotalContaVO buscarTotalMesAtual() throws UsuarioSessaoNullException {
+		
+		BigDecimal total = BigDecimal.ZERO;
+		BigDecimal valorPago = BigDecimal.ZERO;
+		BigDecimal restante = BigDecimal.ZERO;
 
-		TotalContaVO totalContaVO = new TotalContaVO();
+//		TotalContaVO totalContaVO = new TotalContaVO();
 		
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(new Date());
 		Date dataInicial = this.popularDataInicial(calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR));
 		Date dataFinal = this.popularDataFinal(calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR));
 		
-		totalContaVO = totalGastosRepository.buscarTotalMes(dataInicial, dataFinal);
+//		totalContaVO = totalGastosRepository.buscarTotalMes(dataInicial, dataFinal);
+//		
+//		return totalContaVO;
 		
-		return totalContaVO;
+//		List<ContaVO> contasMapeadas = new ArrayList<ContaVO>();
+		List<Conta> contasNaoMapeadas =  contaRepository.findByUsuarioNomeUsuarioAndVencimentoBetween(
+				usuarioSessaoVO.getNomeUsuario(), dataInicial, dataFinal);
+		
+		
+		if(!CollectionUtils.isEmpty(contasNaoMapeadas)) {
+			for (Conta conta : contasNaoMapeadas) {
+				if(conta.getPaga()){
+					valorPago = valorPago.add(conta.getValor());
+				}else{
+					restante = restante.add(conta.getValor());
+				}
+				
+				total = total.add(conta.getValor());
+				
+			}
+		}
+		
+		//TODO: REFATORAR ISSO PARA PASSAR O VO
+		return new TotalContaVO(total, valorPago, restante);
 	}
 
-	@Override
+	
 	public TotalContaVO buscarTotalMes(Integer mes, Integer ano) throws UsuarioSessaoNullException {
 
-		TotalContaVO totalContaVO = new TotalContaVO();
+//		TotalContaVO totalContaVO = new TotalContaVO();
 		
-		Date dataInicial = this.popularDataInicial(mes, ano);
-		Date dataFinal = this.popularDataFinal(mes, ano);
+//		Date dataInicial = this.popularDataInicial(mes, ano);
+//		Date dataFinal = this.popularDataFinal(mes, ano);
 		
-		totalContaVO = totalGastosRepository.buscarTotalMes(dataInicial, dataFinal);
+//		totalContaVO = totalGastosRepository.buscarTotalMes(dataInicial, dataFinal);
+//		
+//		return totalContaVO;
 		
-		return totalContaVO;
+		return this.buscarTotalMes(mes, ano);
+		
 	}
 	
-	@Override
+	
 	public TotalContaVO buscarTotalDividas() throws UsuarioSessaoNullException {
 		
-		TotalContaVO totalContaVO = new TotalContaVO();
+//		TotalContaVO totalContaVO = new TotalContaVO();
 		
-		totalContaVO = totalGastosRepository.buscarTotal();
+		BigDecimal total = BigDecimal.ZERO;
+		BigDecimal valorPago = BigDecimal.ZERO;
+		BigDecimal restante = BigDecimal.ZERO;
 		
-		return totalContaVO;
+//		totalContaVO = totalGastosRepository.buscarTotal();
+		
+//		return totalContaVO;
+		
+		Iterable<Conta> contas = contaRepository.findAll();
+
+		for (Iterator<Conta> iterator = contas.iterator(); iterator.hasNext();) {
+			Conta conta = iterator.next();
+			if(conta.getPaga()){
+				valorPago = valorPago.add(conta.getValor());
+			}else{
+				restante = restante.add(conta.getValor());
+			}
+			
+			total = total.add(conta.getValor());
+		}
+		
+		//TODO: REFATORAR ISSO PARA PASSAR O VO
+		return new TotalContaVO(total, valorPago, restante);
 	}
 	
 	

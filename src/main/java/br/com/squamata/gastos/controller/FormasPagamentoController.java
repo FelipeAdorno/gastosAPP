@@ -54,7 +54,7 @@ public class FormasPagamentoController extends AbstractController {
 			} catch (UsuarioSessaoNullException e) {
 				logger.error(e.getMessage());
 				retorno.setTipoMensagemEnum(TipoMensagemEnum.DANGER);
-				retorno.addMensagem("Cadastro não realizado, tente novamente!");
+				retorno.addMensagem("Erro ao realizar o cadastro, tente novamente!");
 			}
 		}
 		return new ResponseEntity<MensagemRetornoVO>(retorno, HttpStatus.OK);
@@ -94,16 +94,21 @@ public class FormasPagamentoController extends AbstractController {
 	
 	@RequestMapping(value = "/excluir/{formaPagamento}", method = RequestMethod.GET)
 	public ResponseEntity<MensagemRetornoVO> excluir(@PathVariable("formaPagamento") String formaPagamento, Locale locale) {
+		
+		//converte a forma de pagamento
+		formaPagamento = super.converterParamestroURL(formaPagamento);
+				
+		
 		final MensagemRetornoVO retorno = new MensagemRetornoVO();
 		try {
 			formaPagamentoService.remover(formaPagamento);
 			retorno.setTipoMensagemEnum(TipoMensagemEnum.SUCCESS);
-			retorno.addMensagem("Remoção realizada com sucesso!");
+			retorno.addMensagem("Forma pagamento removida com sucesso!");
 			return new ResponseEntity<MensagemRetornoVO>(retorno, HttpStatus.OK);
 		} catch (UsuarioSessaoNullException e) {
 			logger.error(e.getMessage());
 			retorno.setTipoMensagemEnum(TipoMensagemEnum.DANGER);
-			retorno.addMensagem("Remoção não realizada, tente novamente!");
+			retorno.addMensagem("Erro ao remover a forma de pagamento, tente novamente!");
 			return new ResponseEntity<MensagemRetornoVO>(retorno, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		

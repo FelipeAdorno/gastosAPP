@@ -27,7 +27,7 @@
 	
 		<div class="row form">
         	<div class="alert alert-dismissable nao-visivel">
-        		 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        		 <button type="button" class="close">&times;</button>
         		 <div class = "mensagens"></div>
         	</div>
 	    </div>  

@@ -23,10 +23,10 @@
 		</ul>
 	</div>
 	
-	<div class="col-xs-10 col-md-10">
+	<div class="col-xs-12 col-md-12">
 		<div class="row form">
         	<div class="alert alert-dismissable nao-visivel">
-        		 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        		 <button type="button" class="close">&times;</button>
         		 <div class = "mensagens"></div>
         	</div>
 	    </div> 
@@ -43,14 +43,17 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="forma in formaPagamento">
+					<tr ng-show="!formaPagamento.length">
+						<td>Nenhum registro encontrado!</td>
+					</tr>
+					<tr ng-show="formaPagamento.length"  ng-repeat="forma in formaPagamento">
 						<td>{{forma.formaPagamento}}</td>
 						<td class="text-center">
-							<span class="glyphicon glyphicon-edit"></span>
+							<span class="fa fa-edit"></span>
 						</td>
 						<td class="text-center">
 							<a href="" ng-click="excluir(forma)">
-								<span class="glyphicon glyphicon-trash"></span>
+								<span class="fa fa-trash-o"></span>
 							</a>
 						</td>
 					</tr>

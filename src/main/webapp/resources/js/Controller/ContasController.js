@@ -1,12 +1,20 @@
 function ContasController($scope, $location, $http) {
 	
-	$scope.urlPrefixFormaPagamento = "/squamataGastos/formasPagamento";
+	$scope.urlPrefixFormaPagamento = "/formasPagamento";
 	
-	$scope.urlPrefixCategoria = "/squamataGastos/categorias";
+	$scope.urlPrefixCategoria = "/categorias";
 	
-	$scope.urlPrefix = "/squamataGastos/contas";
+	$scope.urlPrefix = "/contas";
 	
-	$scope.conta = {};
+	$scope.contas = {};
+	
+	$scope.totalMes = {};
+	
+	$scope.contasAtrasadas = {};
+	
+	$scope.totalAtrasado = {};
+	
+	$scope.totalGeral = {};
 	
 	$scope.busca = {};
 	
@@ -33,12 +41,37 @@ function ContasController($scope, $location, $http) {
 	};
 	
 	$scope.filtrar = function(pagina) {
+		$scope.buscarContasMes(pagina);
+		$scope.buscarContasAtrasadas(pagina);
+		$scope.calcularValorTotalContasMes();
+	};
+	
+	$scope.buscarContasMes = function(pagina) {
 		var url = $scope.urlPrefix + "/buscar/"+pagina+"/"+$scope.busca.mes+"/"+$scope.busca.ano;
         $http.get(url)
         .success(function (retorno) {
-        	$scope.conta = retorno.contas;
-        })
-        .error(function() {
+        	$scope.contas = retorno.contas;
+        	$scope.totalMes = retorno.totalContaVO;
+        }).error(function() {
+        	MensagemRetorno.tratarMensagemErroComunicacao();
+        });
+	};
+	
+	$scope.buscarContasAtrasadas = function(pagina) {
+		var url = $scope.urlPrefix + "/buscarContasEmAtraso/"+pagina+"/"+$scope.busca.mes+"/"+$scope.busca.ano;
+        $http.get(url).success(function (retorno) {
+        	$scope.contasAtrasadas = retorno.contas;
+        	$scope.totalAtrasado = retorno.totalContaVO;
+        }).error(function() {
+        	MensagemRetorno.tratarMensagemErroComunicacao();
+        });
+	};
+	
+	$scope.calcularValorTotalContasMes = function() {
+		var url = $scope.urlPrefix + "/calcularValorTotalContasMes/"+$scope.busca.mes+"/"+$scope.busca.ano;
+        $http.get(url).success(function (retorno) {
+        	$scope.totalGeral = retorno;
+        }).error(function() {
         	MensagemRetorno.tratarMensagemErroComunicacao();
         });
 	};
@@ -48,8 +81,7 @@ function ContasController($scope, $location, $http) {
         $http.get(url)
         .success(function (retorno) {
         	$scope.conta = retorno.contas;
-        })
-        .error(function() {
+        }).error(function() {
         	MensagemRetorno.tratarMensagemErroComunicacao();
         });
 	};
@@ -61,8 +93,7 @@ function ContasController($scope, $location, $http) {
         .success(function (retorno) {
         	MensagemRetorno.tratarMensagesRetorno(retorno);
         	$scope.conta = {};
-        })
-        .error(function() {
+        }).error(function() {
         	MensagemRetorno.tratarMensagemErroComunicacao();
         });
     };
@@ -72,8 +103,7 @@ function ContasController($scope, $location, $http) {
         $http.get(url)
         .success(function (retorno) {
         	$scope.formasPagamento = retorno.formasPagamento;
-        })
-        .error(function() {
+        }).error(function() {
         	MensagemRetorno.tratarMensagemErroComunicacao();
         });
 	};
@@ -83,8 +113,7 @@ function ContasController($scope, $location, $http) {
         $http.get(url)
         .success(function (retorno) {
         	$scope.categorias = retorno.categorias;
-        })
-        .error(function() {
+        }).error(function() {
         	MensagemRetorno.tratarMensagemErroComunicacao();
         });
 	};    

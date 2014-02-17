@@ -24,6 +24,7 @@ import br.com.squamata.gastos.service.ContaService;
 import br.com.squamata.gastos.vo.ContaListaVO;
 import br.com.squamata.gastos.vo.ContaVO;
 import br.com.squamata.gastos.vo.MensagemRetornoVO;
+import br.com.squamata.gastos.vo.TotalContaVO;
 
 @Controller
 @RequestMapping(value="/contas")
@@ -54,7 +55,7 @@ public class ContasController extends AbstractController {
 			} catch (UsuarioSessaoNullException e) {
 				logger.error(e.getMessage());
 				retorno.setTipoMensagemEnum(TipoMensagemEnum.DANGER);
-				retorno.addMensagem("Cadastro não realizado, tente novamente!");
+				retorno.addMensagem("Erro ao realizar o cadastro, tente novamente!");
 			}
 		}
 		return new ResponseEntity<MensagemRetornoVO>(retorno, HttpStatus.OK);
@@ -83,11 +84,38 @@ public class ContasController extends AbstractController {
 	public ResponseEntity<ContaListaVO> buscar(@PathVariable("paginaAtual") Integer paginaAtual, @PathVariable("mes") Integer mes, @PathVariable("ano") Integer ano, Locale locale, Model model) {
 		ContaListaVO contas = null;
 		try {
-			contas = contaService.buscarPorMesEAno(paginaAtual, 20, mes, ano);
+			contas = contaService.buscarPorMesEAno(paginaAtual, 10, mes, ano);
 			return new ResponseEntity<ContaListaVO>(contas, HttpStatus.OK);
 		} catch (UsuarioSessaoNullException e) {
 			logger.error(e.getMessage());
 			return new ResponseEntity<ContaListaVO>(contas, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+	}
+	
+	@RequestMapping(value = "/buscarContasEmAtraso/{paginaAtual}/{mes}/{ano}", method = RequestMethod.GET)
+	public ResponseEntity<ContaListaVO> buscarContasEmAtraso(@PathVariable("paginaAtual") Integer paginaAtual, @PathVariable("mes") Integer mes, @PathVariable("ano") Integer ano, Locale locale, Model model) {
+		ContaListaVO contas = null;
+		try {
+			contas = contaService.buscarContasAtrasadas(paginaAtual, 10, mes, ano);
+			
+			return new ResponseEntity<ContaListaVO>(contas, HttpStatus.OK);
+		} catch (UsuarioSessaoNullException e) {
+			logger.error(e.getMessage());
+			return new ResponseEntity<ContaListaVO>(contas, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+	}
+	
+	@RequestMapping(value = "/calcularValorTotalContasMes/{mes}/{ano}", method = RequestMethod.GET)
+	public ResponseEntity<TotalContaVO> calcularValorTotalContasMes(@PathVariable("mes") Integer mes, @PathVariable("ano") Integer ano, Locale locale, Model model) {
+		TotalContaVO total = null;
+		try {
+			total = contaService.calcularValorTotalContasMes(mes, ano);
+			return new ResponseEntity<TotalContaVO>(total, HttpStatus.OK);
+		} catch (UsuarioSessaoNullException e) {
+			logger.error(e.getMessage());
+			return new ResponseEntity<TotalContaVO>(total, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
 	}
@@ -98,12 +126,12 @@ public class ContasController extends AbstractController {
 		try {
 			contaService.remover(descricao);
 			retorno.setTipoMensagemEnum(TipoMensagemEnum.SUCCESS);
-			retorno.addMensagem("Remoção realizada com sucesso!");
+			retorno.addMensagem("Conta removida com sucesso!");
 			return new ResponseEntity<MensagemRetornoVO>(retorno, HttpStatus.OK);
 		} catch (UsuarioSessaoNullException e) {
 			logger.error(e.getMessage());
 			retorno.setTipoMensagemEnum(TipoMensagemEnum.DANGER);
-			retorno.addMensagem("Remoção não realizada, tente novamente!");
+			retorno.addMensagem("Erro ao remover a conta, tente novamente!");
 			return new ResponseEntity<MensagemRetornoVO>(retorno, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		

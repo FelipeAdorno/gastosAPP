@@ -15,6 +15,12 @@ public class TotalContaVO {
 		this.totalPagao = BigDecimal.ZERO;
 		this.restante = BigDecimal.ZERO;
 	}
+	
+	public TotalContaVO(final BigDecimal total, final BigDecimal totalPago, final BigDecimal restante) {
+		this.total = total;
+		this.totalPagao = totalPago;
+		this.restante = restante;
+	}
 
 	public BigDecimal getTotal() {
 		return total;

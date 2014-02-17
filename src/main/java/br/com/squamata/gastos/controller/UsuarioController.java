@@ -57,12 +57,12 @@ public class UsuarioController extends AbstractController {
 			try {
 				usuarioService.salvar(usuario);
 				retorno.setTipoMensagemEnum(TipoMensagemEnum.SUCCESS);
-				retorno.addMensagem("Cadastro realizado com sucesso, Clique <a href='/squamataGastos/'>"
+				retorno.addMensagem("Cadastro realizado com sucesso, Clique <a href='/'>"
 						+ "aqui</a> para fazer login!");
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 				retorno.setTipoMensagemEnum(TipoMensagemEnum.DANGER);
-				retorno.addMensagem("Cadastro não realizado, tente novamente!");
+				retorno.addMensagem("Erro ao realizar cadastro, tente novamente!");
 			}
 		}
 		

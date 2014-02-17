@@ -27,7 +27,7 @@
 	<div class="col-xs-10 col-md-10">
 		<div class="row form">
         	<div class="alert alert-dismissable nao-visivel">
-        		 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        		 <button type="button" class="close">&times;</button>
         		 <div class = "mensagens"></div>
         	</div>
 	    </div> 
@@ -44,14 +44,17 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="categoria in categoria">
+					<tr ng-show="!categoria.length">
+						<td>Nenhum registro encontrado!</td>
+					</tr>
+					<tr ng-show="categoria.length"  ng-repeat="categoria in categoria">
 						<td>{{categoria.categoria}}</td>
 						<td class="text-center">
-							<span class="glyphicon glyphicon-edit"></span>
+							<span class="fa fa"></span>
 						</td>
 						<td class="text-center">
 							<a href="" ng-click="excluir(categoria)">
-								<span class="glyphicon glyphicon-trash"></span>
+								<span class="fa fa-trash-o"></span>
 							</a>
 						</td>
 					</tr>

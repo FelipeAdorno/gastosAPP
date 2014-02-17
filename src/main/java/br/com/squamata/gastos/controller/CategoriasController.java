@@ -54,7 +54,7 @@ public class CategoriasController extends AbstractController {
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 				retorno.setTipoMensagemEnum(TipoMensagemEnum.DANGER);
-				retorno.addMensagem("Cadastro não realizado, tente novamente!");
+				retorno.addMensagem("Erro ao realizar cadastro, tente novamente!");
 			}
 		}
 		return new ResponseEntity<MensagemRetornoVO>(retorno, HttpStatus.OK);
@@ -98,12 +98,12 @@ public class CategoriasController extends AbstractController {
 		try {
 			categoriaService.remover(descricao);
 			retorno.setTipoMensagemEnum(TipoMensagemEnum.SUCCESS);
-			retorno.addMensagem("Remoção realizada com sucesso!");
+			retorno.addMensagem("Categoria removida com sucesso!");
 			return new ResponseEntity<MensagemRetornoVO>(retorno, HttpStatus.OK);
 		} catch (UsuarioSessaoNullException e) {
 			logger.error(e.getMessage());
 			retorno.setTipoMensagemEnum(TipoMensagemEnum.DANGER);
-			retorno.addMensagem("Remoção não realizada, tente novamente!");
+			retorno.addMensagem("Erro ao remover a categoria, tente novamente!");
 			return new ResponseEntity<MensagemRetornoVO>(retorno, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		

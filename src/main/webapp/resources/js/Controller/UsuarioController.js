@@ -1,6 +1,6 @@
 function UsuarioController($scope, $location, $http) {
 	
-	$scope.urlPrefix = "/squamataGastos/";
+	$scope.urlPrefix = "/";
 	
 	$scope.usuario = {};
 	

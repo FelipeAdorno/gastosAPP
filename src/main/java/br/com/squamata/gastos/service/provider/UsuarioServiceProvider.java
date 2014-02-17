@@ -25,12 +25,12 @@ public class UsuarioServiceProvider implements UsuarioService {
 	@Autowired 
 	private PasswordEncoder encoder;
 
-	@Override
+	
 	public Usuario buscarPorNomeUsuario(String nomeUsuario) {
 		return usuarioRepository.findByNomeUsuario(nomeUsuario);
 	}
 
-	@Override
+	
 	public void salvar(Usuario entrada) {
 		
 		//Deixo o usuário habilitado
@@ -50,30 +50,30 @@ public class UsuarioServiceProvider implements UsuarioService {
 		return encoder.encode(senha);
 	}
 
-	@Override
+	
 	public void atualizar(Usuario entrada) {
 		usuarioRepository.save(entrada);
 	}
 
-	@Override
+	
 	public void remover(String entrada) {
 //		usuarioRepository.delete(Usuario entrada);
 	}
 
-	@Override
+	
 	public Usuario buscar(String entrada, String usuario) {
 //		return usuarioRepository.findOne(id);
 		return null;
 	}
 
-	@Override
+	
 	public UsuarioListaVO listar(Integer paginaAtual, Integer quantidadeRegistros, String ordenacao) {
 		final PageRequest pageRequest = new PageRequest(paginaAtual, quantidadeRegistros, new Sort(Sort.Direction.ASC, ordenacao));
 		usuarioRepository.findAll(pageRequest);
 		return null;
 	}
 
-	@Override
+	
 	public List<Usuario> listar() throws UsuarioSessaoNullException {
 		// TODO Auto-generated method stub
 		return null;

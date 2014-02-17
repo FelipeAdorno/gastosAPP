@@ -1,6 +1,6 @@
 function FormasPagamentoController($scope, $location, $http) {
 	
-	$scope.urlPrefix = "/squamataGastos/formasPagamento";
+	$scope.urlPrefix = "/formasPagamento";
 	
 	$scope.formaPagamento = {};
 	
@@ -32,7 +32,7 @@ function FormasPagamentoController($scope, $location, $http) {
     };
     
 	$scope.excluir = function(formaPagamento) {
-		var config = {headers: {'Content-Type': 'json; charset=UTF-8'}};
+		var config = {headers: {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}};
 		var url = $scope.urlPrefix + "/excluir/"+formaPagamento.formaPagamento;
 		$http.get(url, config)
         .success(function (retorno) {

@@ -33,7 +33,6 @@ public class CategoriaServiceProvider implements CategoriaService {
 	@Autowired
 	private CategoriaRepository categoriaRepository;
 
-	@Override
 	public void salvar(Categoria entrada) throws UsuarioSessaoNullException {
 		if(usuarioSessaoVO == null) {
 			logger.error("O usuário da sessão não pode ser null");
@@ -45,12 +44,10 @@ public class CategoriaServiceProvider implements CategoriaService {
 		}
 	}
 
-	@Override
 	public void atualizar(Categoria entrada) {
 		categoriaRepository.save(entrada);
 	}
 
-	@Override
 	public void remover(String entrada) throws UsuarioSessaoNullException  {
 		if(usuarioSessaoVO == null) {
 			logger.error("O usuário da sessão não pode ser null");
@@ -63,12 +60,10 @@ public class CategoriaServiceProvider implements CategoriaService {
 		}
 	}
 
-	@Override
 	public Categoria buscar(String categoria, String nomeUsuario) {
 		return categoriaRepository.findByUsuarioNomeUsuarioAndCategoria(nomeUsuario, categoria);
 	}
 
-	@Override
 	public CategoriaListaVO listar(Integer paginaAtual, Integer quantidadeRegistros, String ordenacao) throws UsuarioSessaoNullException {
 		if(usuarioSessaoVO == null) {
 			logger.error("O usuário da sessão não pode ser null");
@@ -80,7 +75,6 @@ public class CategoriaServiceProvider implements CategoriaService {
 		}
 	}
 
-	@Override
 	public List<Categoria> listar() throws UsuarioSessaoNullException {
 		if(usuarioSessaoVO == null) {
 			logger.error("O usuário da sessão não pode ser null");

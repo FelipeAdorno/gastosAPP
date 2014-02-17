@@ -42,7 +42,7 @@ public class SpringSecurityAfterLoginService extends SavedRequestAwareAuthentica
         	 request.getSession().setAttribute("usuarioSessaoVO", usuarioSessaoVO);
         	 
              if (roles.contains("ROLE_USUARIO")) {
-            	url = "/squamataGastos/gastos/";
+            	url = "/gastos/";
              }else {
             	url = "/";
              }

@@ -1,7 +1,5 @@
 package br.com.squamata.gastos.service;
 
-import java.util.List;
-
 import br.com.squamata.gastos.exception.UsuarioSessaoNullException;
 import br.com.squamata.gastos.vo.ContaListaVO;
 import br.com.squamata.gastos.vo.ContaVO;
@@ -16,9 +14,11 @@ public interface ContaService extends AbstractService<ContaVO, ContaListaVO> {
 	TotalContaVO buscarTotalMesAtual() throws UsuarioSessaoNullException;
 	
 	TotalContaVO buscarTotalMes(Integer mes, Integer ano) throws UsuarioSessaoNullException;
-	
-	List<ContaVO> listarContasMes(Integer mes, Integer ano) throws UsuarioSessaoNullException;
-	
+
 	TotalContaVO buscarTotalDividas() throws UsuarioSessaoNullException;
+	
+	ContaListaVO buscarContasAtrasadas(final Integer paginaAtual, final Integer quantidadeRegistros, final Integer mes, final Integer ano) throws UsuarioSessaoNullException; 
+	
+	TotalContaVO calcularValorTotalContasMes(final Integer mes, final Integer ano) throws UsuarioSessaoNullException; 
 	
 }

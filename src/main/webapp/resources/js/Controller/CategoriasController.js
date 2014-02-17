@@ -1,6 +1,6 @@
 function CategoriasController($scope, $location, $http) {
 	
-	$scope.urlPrefix = "/squamataGastos/categorias";
+	$scope.urlPrefix = "/categorias";
 	
 	$scope.categoria = {};
 	

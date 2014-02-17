@@ -1,5 +1,6 @@
 package br.com.squamata.gastos.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -48,4 +49,14 @@ public class AbstractController  {
 		return retorno;
 	}
 	
+	public String converterParamestroURL(final String entrada) {
+		byte[] parametro =  null;
+		try {
+			parametro = entrada.toString().getBytes("ISO-8859-1");
+		} catch (UnsupportedEncodingException e) {
+			logger.error("Erro ao converter parametros de entrada");
+			e.printStackTrace();
+		}
+		return new String(parametro);
+	}
 }

@@ -4,10 +4,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <!DOCTYPE html>
-<html ng-app>
+<html ng-app="AppGastos">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Projeto Agenda - <decorator:title /></title>
+    <title>Projeto Gastos - <decorator:title /></title>
     <link href="<c:url value='/resources/css/bootstrap.min.css'  />" rel="stylesheet"/>
     <!--<link href="<c:url value='/resources/css/bootstrap-theme.min.css'  />" rel="stylesheet"/>-->
     <link rel="stylesheet" href="<c:url value='/resources/css/font-awesome/css/font-awesome.min.css'/>">
@@ -27,6 +27,7 @@
     <script src="<c:url value='/resources/js/Main.js' />"></script>
     <script src="<c:url value='/resources/js/MensagemRetorno.js' />"></script>
     <script src="<c:url value='/resources/js/json2.js' />"></script>
+    <script src="<c:url value='/resources/js/blockui.js' />"></script>
     <decorator:head />
     <style>
 </style>
@@ -65,28 +66,41 @@ $(function() {
 
             <ul class="nav navbar-top-links navbar-right">
               <li class="dropdown user-dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-comment"></i> <b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="#"><i class="fa fa-user"></i> Perfil</a></li>
-                <li><a href="#"><i class="fa fa-gear"></i> Preferências</a></li>
-                <li class="divider"></li>
-                <li><a href="<c:url value='/logout'/>"><i class="fa fa-power-off"></i> Log Out</a></li>
-              </ul>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="Fale Conosco"><i class="fa fa-comment"></i> <b class="caret"></b></a>
+                <div class="dropdown-menu" style="padding: 15px; padding-bottom: 0px; width: 350px;">
+                	<div>
+						<h3>Fale Conosco</h3>
+					</div>
+					<div>
+	    				<form method="post" class="form-group" ng-submit="cadastrar();">
+							<div class="form-group">
+								<input type="text" disabled class="form-control" value="${usuarioSessaoVO.nome}" />
+							</div>
+							<div class="form-group">
+								<input type="text" class="form-control" value="${usuarioSessaoVO.nomeUsuario}"/>
+							</div>
+							<div class="form-group">
+								<textarea class="form-control" rows="3"></textarea>
+							</div>
+							<div class="text-center">
+								<button class="btn btn-primary" type="submit">Enviar</button>
+							</div>
+						</form>
+					</div>
+            	</div>
             </li>
             <li class="dropdown user-dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cloud-download"></i> <b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="#"><i class="fa fa-user"></i> Perfil</a></li>
-                <li><a href="#"><i class="fa fa-gear"></i> Preferências</a></li>
-                <li class="divider"></li>
-                <li><a href="<c:url value='/logout'/>"><i class="fa fa-power-off"></i> Log Out</a></li>
-              </ul>
+              <div class="dropdown-menu" style="padding: 15px; padding-bottom: 0px; width: 350px;">
+              	<div>
+					<h4>Novas atualizações</h4>
+				</div>
+              </div>
             </li>
             <li class="dropdown user-dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <li><a href="#"><i class="fa fa-user"></i> Perfil</a></li>
-                <li><a href="#"><i class="fa fa-gear"></i> Preferências</a></li>
                 <li class="divider"></li>
                 <li><a href="<c:url value='/logout'/>"><i class="fa fa-power-off"></i> Log Out</a></li>
               </ul>

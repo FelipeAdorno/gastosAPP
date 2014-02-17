@@ -63,7 +63,6 @@ body {
         </div>
 		<input type="text" name="j_username" id="j_username" class="form-control" placeholder="Nome de usuário" required autofocus >
 		<input type="password" name="j_password" id="j_password" class="form-control" placeholder="Senha" required> 
-		<label class="checkbox"><input type="checkbox" value="remember-me">Continuar Logado</label>
 		<button class="btn btn-lg btn-primary btn-block" type="submit">Entrar</button><br />
 		<div style="text-align: center;">
 		<span>Ainda não é cadastrado? Clique <a href="<c:url value='cadastro'  />">aqui.</a></span>

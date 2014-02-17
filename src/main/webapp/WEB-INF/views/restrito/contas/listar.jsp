@@ -26,7 +26,7 @@
 	<div class="col-xs-12 col-md-12">
 		<div class="row form">
         	<div class="alert alert-dismissable nao-visivel">
-        		 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        		 <button type="button" class="close">&times;</button>
         		 <div class = "mensagens"></div>
         	</div>
 	    </div> 
@@ -74,6 +74,12 @@
 	</div>
 	
 	<div class="col-xs-12 col-md-12">
+		<div class="page-header">
+			<h5>Contas do mês<h5>
+		</div>
+	</div>
+	
+	<div class="col-xs-12 col-md-12">
 		<div class="table-responsive">
 			<table class="table table-bordered">
 				<thead>
@@ -85,12 +91,79 @@
 						<th class="text-center" width="10%">Nº Parcelas</th>
 						<th class="text-center" width="10%">Categoria</th>
 						<th class="text-center" width="10%">Forma Pagamento</th>
-						<th class="text-center" width="10%">Editar</th>
-						<th class="text-center" width="10%">Excluir</th>
+						<th class="text-center" width="7%">Pagar</th>
+						<th class="text-center" width="7%">Editar</th>
+						<th class="text-center" width="7%">Excluir</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="conta in conta" ng-class="({{conta.paga}} == true) ? 'paga' : 'naoPaga'">
+					<tr ng-show="!contas.length">
+						<td colspan="10">Nenhum registro encontrado!</td>
+					</tr>
+					<tr ng-show="contas.length" ng-repeat="conta in contas" ng-class="({{conta.paga}} == true) ? 'paga' : 'naoPaga'">
+						<td>{{conta.descricao}}</td>
+						<td class="text-center">{{conta.valor | currency:"R$" }}</td>
+						<td class="text-center">{{conta.vencimento | date:'dd-MM-yyyy'}}</td>
+						<td class="text-center">{{conta.numeroParcela}}</td>
+						<td class="text-center">{{conta.totalParcelas}}</td>
+						<td>{{conta.categoria.categoria}}</td>
+						<td>{{conta.formaPagamento.formaPagamento}}</td>
+						<td class="text-center">						
+							<a ng-show="!conta.paga" href="" ng-click="pagar(forma)">
+								<span class="fa fa-money"></span>
+							</a>
+							<span ng-show="conta.paga" class="fa fa-money"></span>
+						</td>
+						<td class="text-center">
+							<a href="" ng-click="excluir(forma)">
+								<span class="fa fa-edit"></span>
+							</a>
+						</td>
+						<td class="text-center">
+							<a href="" ng-click="excluir(forma)">
+								<span class="fa fa-trash-o"></span>
+							</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+	<div class="col-xs-12 col-md-12 text-right">
+		<div class="col-xs-12 col-md-12">
+			<b>Pago:</b> {{totalMes.totalPagao | currency:"R$" }}<br />
+			<b>Restante:</b> {{totalMes.restante | currency:"R$" }}<br />
+			<b>-----------------------------------------------------</b><br />
+			<b>SubTotal:</b> {{totalMes.total | currency:"R$" }}<br />
+		</div>
+	</div>
+	
+	<div class="col-xs-12 col-md-12">
+		<div class="page-header">
+			<h5>Contas em atraso<h5>
+		</div>
+		<div class="table-responsive">
+			<table class="table table-bordered table-striped">
+				<thead>
+					<tr>
+						<th class="text-center" width="20%">Conta</th>
+						<th class="text-center" width="10%">Valor(R$)</th>
+						<th class="text-center" width="10%">Vencimento</th>
+						<th class="text-center" width="10%">Parcela</th>
+						<th class="text-center" width="10%">Nº Parcelas</th>
+						<th class="text-center" width="10%">Categoria</th>
+						<th class="text-center" width="10%">Forma Pagamento</th>
+						<th class="text-center" width="7%">Pagar</th>
+						<th class="text-center" width="7%">Editar</th>
+						<th class="text-center" width="7%">Excluir</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-show="!contasAtrasadas.length">
+						<td colspan="10">Nenhum registro encontrado!</td>
+					</tr>
+					<tr  ng-show="contasAtrasadas.length" ng-repeat="conta in contasAtrasadas">
 						<td>{{conta.descricao}}</td>
 						<td class="text-center">{{conta.valor | currency:"R$" }}</td>
 						<td class="text-center">{{conta.vencimento | date:'dd-MM-yyyy'}}</td>
@@ -99,11 +172,18 @@
 						<td>{{conta.categoria.categoria}}</td>
 						<td>{{conta.formaPagamento.formaPagamento}}</td>
 						<td class="text-center">
-							<span class="glyphicon glyphicon-edit"></span>
+							<a href="" ng-click="pagar(forma)">
+								<span class="fa fa-money"></span>
+							</a>
 						</td>
 						<td class="text-center">
 							<a href="" ng-click="excluir(forma)">
-								<span class="glyphicon glyphicon-trash"></span>
+								<span class="fa fa-edit"></span>
+							</a>
+						</td>
+						<td class="text-center">
+							<a href="" ng-click="excluir(forma)">
+								<span class="fa fa-trash-o"></span>
 							</a>
 						</td>
 					</tr>
@@ -111,6 +191,26 @@
 			</table>
 		</div>
 	</div>
+	
+	<div class="col-xs-12 col-md-12 text-right">
+		<div class="col-xs-12 col-md-12">
+			<b>Em Atraso:</b> {{totalAtrasado.total | currency:"R$" }}<br />
+		</div>
+	</div>
+	
+	<div class="col-xs-12 col-md-12 text-right" >
+		<div class="col-xs-12 col-md-12">
+			<b>-----------------------------------------------------</b><br />
+			<b>Pago:</b> {{totalGeral.totalPagao | currency:"R$" }}<br />
+			<b>Restante:</b> {{totalGeral.restante | currency:"R$" }}<br />
+			<b>-----------------------------------------------------</b><br />
+			<b>Total:{{totalGeral.total | currency:"R$" }}<br /></b>
+		</div>
+	</div>
+	
+
+	
+	
 </div>
 </body>
 </html>

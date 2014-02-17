@@ -12,10 +12,11 @@
 	
 	<!-- Mongo config -->
 	
+	<!-- OPENSHIFT SERVER-->
+	<mongo:db-factory id="mongoDbFactory" uri="mongodb://admin:4w88yt92mfDF@127.5.36.130:27017/appgastos" />
 	
-	<!--<mongo:db-factory id="mongoDbFactory" uri="mongodb://felipeadsc:felipeADHAHAHA@troup.mongohq.com:10026/gastos" />
-	-->
-	<mongo:db-factory id="mongoDbFactory" host="localhost" port="27017" dbname="gastos" />
+	<!-- LOCAL -->
+	<!--<mongo:db-factory id="mongoDbFactory" host="localhost" port="27017" dbname="gastos" />-->
 	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
 	 	<constructor-arg ref="mongoDbFactory" />
 	</bean>
