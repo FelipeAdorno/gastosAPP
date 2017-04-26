@@ -13,7 +13,7 @@
 	<!-- Mongo config -->
 	
 	<!-- OPENSHIFT SERVER-->
-	<mongo:db-factory id="mongoDbFactory" uri="mongodb://admin:lBnR5ui46hkw@127.5.36.130:27017/gastos" />
+	<mongo:db-factory id="mongoDbFactory" uri="mongodb://admin:lBnR5ui46hkw@59009b632d52713c9f000054-squamata.rhcloud.com:35946/gastos" />
 	
 	<!-- LOCAL -->
 	<!--<mongo:db-factory id="mongoDbFactory" host="localhost" port="27017" dbname="gastos" />-->
